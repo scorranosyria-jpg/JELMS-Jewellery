@@ -3,11 +3,74 @@ const Stripe = require('stripe');
 const path = require('node:path');
 const prices = require('./stripe-prices.json');
 
-// Server-only configuration. Never expose this key through browser JavaScript.
-function createApp({ stripe, domain = 'http://localhost:3000' } = {}) {
+// Server-only configuration. Never expose these secrets through browser JavaScript.
+function createApp({
+  stripe,
+  domain = 'http://localhost:3000',
+  webhookSecret = process.env.STRIPE_WEBHOOK_SECRET
+} = {}) {
   const app = express();
   const origin = new URL(domain).origin;
   app.disable('x-powered-by');
+
+  function logSuccessfulPayment(session) {
+    const customerDetails = session.customer_details || {};
+    const shippingDetails = session.shipping_details || {};
+    const payment = {
+      sessionId: session.id,
+      paymentStatus: session.payment_status,
+      amount: session.amount_total,
+      currency: session.currency,
+      customerName: customerDetails.name || shippingDetails.name || null,
+      customerEmail: customerDetails.email || null,
+      phoneNumber: customerDetails.phone || null,
+      deliveryAddress: shippingDetails.address || null
+    };
+    console.log('Stripe payment successful:', JSON.stringify(payment));
+  }
+
+  app.post('/stripe-webhook', express.raw({ type: 'application/json' }), (req, res) => {
+    if (!stripe || !webhookSecret) {
+      return res.status(503).json({ error: 'Stripe webhook is not configured.' });
+    }
+
+    let event;
+    try {
+      event = stripe.webhooks.constructEvent(
+        req.body,
+        req.headers['stripe-signature'],
+        webhookSecret
+      );
+    } catch (error) {
+      console.error('Stripe webhook verification failed:', error.message);
+      return res.status(400).send(`Webhook Error: ${error.message}`);
+    }
+
+    switch (event.type) {
+      case 'checkout.session.completed': {
+        const session = event.data.object;
+        if (session.payment_status === 'paid') {
+          logSuccessfulPayment(session);
+        }
+        break;
+      }
+      case 'checkout.session.async_payment_succeeded': {
+        const session = event.data.object;
+        logSuccessfulPayment(session);
+        break;
+      }
+      case 'checkout.session.async_payment_failed': {
+        const session = event.data.object;
+        console.warn('Stripe asynchronous payment failed:', session.id);
+        break;
+      }
+      default:
+        console.log('Unhandled Stripe event:', event.type);
+    }
+
+    res.status(200).json({ received: true });
+  });
+
   app.use(express.json({ limit: '16kb' }));
 
   app.post('/api/create-checkout-session', async (req, res) => {

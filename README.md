@@ -1,5 +1,19 @@
 # Jelms Jewellery — HTML/CSS/JS-Version
 
+## Stripe webhook
+
+Configure a Stripe webhook endpoint at `https://your-domain/stripe-webhook` for
+`checkout.session.completed`, `checkout.session.async_payment_succeeded`, and
+`checkout.session.async_payment_failed`. Set the endpoint's signing secret as
+`STRIPE_WEBHOOK_SECRET` in the server environment and keep it private. For local
+testing, use the Stripe CLI to forward those events to
+`http://localhost:3000/stripe-webhook` and set the CLI-provided signing secret.
+For Vercel production, set `DOMAIN` to `https://jelms-jewellery.vercel.app`.
+The handler verifies Stripe's signature using the raw request body and logs
+successful payment details, including customer contact and delivery information.
+These details may contain personal data; the handler does not persist orders or
+fulfill them.
+
 Vollständiges, produktionsnahes Website-Gerüst für den Schmuck-Shop **Jelms Jewellery** — als reines HTML/CSS/JavaScript, ohne Build-Tool, ohne npm, ohne Framework. Öffne den Ordner einfach in Visual Studio Code.
 
 ## 1. Ordnerstruktur
