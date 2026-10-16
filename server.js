@@ -136,11 +136,19 @@ function createApp({ stripe, domain = 'http://localhost:3000' } = {}) {
   return app;
 }
 
+const key = process.env.STRIPE_SECRET_KEY;
+const stripe = key && !key.includes('...') ? new Stripe(key) : null;
+
+const app = createApp({
+  stripe,
+  domain: process.env.DOMAIN
+});
+
 if (require.main === module) {
-  const key = process.env.STRIPE_SECRET_KEY;
-  const stripe = key && !key.includes('...') ? new Stripe(key) : null;
-  if (!stripe) console.warn('Checkout needs configuration. See STRIPE_INTEGRATION_TODO.md.');
-  createApp({ stripe, domain: process.env.DOMAIN }).listen(process.env.PORT || 3000,
-    () => console.log('JELMS server started.'));
+  app.listen(process.env.PORT || 3000, () => {
+    console.log('JELMS server started.');
+  });
 }
-module.exports = { createApp };
+
+module.exports = app;
+module.exports.createApp = createApp;
