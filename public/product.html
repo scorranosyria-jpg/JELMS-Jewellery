@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Produkt — Jelms Jewellery</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Caveat:wght@600&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body data-page="product">
+
+  <div id="site-header"></div>
+
+  <main class="page-stack container">
+
+    <p class="not-found" id="product-not-found" hidden>Produkt nicht gefunden.</p>
+
+    <div id="product-detail">
+      <div class="detail-grid">
+        <div class="product-gallery">
+          <div class="product-gallery__main">
+            <img id="gallery-main-img" src="" alt="">
+          </div>
+          <div class="product-gallery__thumbs" id="gallery-thumbs"></div>
+        </div>
+
+        <div>
+          <!-- TODO: TEXT ERSETZEN — Produktname -->
+          <h1 class="detail-name" id="detail-name"></h1>
+          <p class="detail-price" id="detail-price"></p>
+          <!-- TODO: TEXT ERSETZEN — Produktbeschreibung -->
+          <p class="detail-description" id="detail-description"></p>
+          <!-- TODO: TEXT ERSETZEN — Materialangabe -->
+          <p class="detail-material" id="detail-material"></p>
+
+          <div class="quantity-row">
+            <button class="step-btn" id="detail-qty-decrease" aria-label="Menge verringern">&minus;</button>
+            <span class="quantity-value" id="detail-qty-value">1</span>
+            <button class="step-btn" id="detail-qty-increase" aria-label="Menge erhöhen">+</button>
+          </div>
+
+          <button class="btn btn-primary" id="detail-add-to-cart"></button>
+        </div>
+      </div>
+
+      <section id="related-products">
+        <div class="section-heading">
+          <h2 class="section-heading__title" id="related-heading"></h2>
+        </div>
+        <div class="product-grid" id="related-grid"></div>
+      </section>
+    </div>
+
+  </main>
+
+  <div id="site-footer"></div>
+
+  <script src="js/content.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Warenkorb — Jelms Jewellery</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Caveat:wght@600&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body data-page="cart">
+  <!--
+    cart.html — Warenkorb als eigene Seite (Alternative zum
+    Slide-in-Panel, das über das Warenkorb-Icon in der Navigation
+    von jeder Seite aus erreichbar ist). Nutzt dieselbe Logik.
+  -->
+
+  <div id="site-header"></div>
+
+  <main class="cart-page">
+    <div class="section-heading">
+      <h1 class="section-heading__title" id="cart-page-heading"></h1>
+    </div>
+
+    <div class="cart-page__empty" id="cart-page-empty" hidden>
+      <p class="cart-page__empty-text" id="cart-page-empty-text"></p>
+      <a class="btn btn-primary" href="shop.html" id="cart-page-continue"></a>
+    </div>
+
+    <div id="cart-page-items" hidden></div>
+
+    <div class="cart-page__summary" id="cart-page-summary" hidden>
+      <div class="cart-subtotal-row">
+        <span id="cart-page-subtotal-label"></span>
+        <span id="cart-page-subtotal-value"></span>
+      </div>
+      <!-- TODO: Mit echtem Checkout-Anbieter verbinden -->
+      <a class="btn btn-primary btn-full" id="cart-page-checkout" href="#checkout"></a>
+    </div>
+  </main>
+
+  <div id="site-footer"></div>
+
+  <script src="js/content.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
