@@ -37,33 +37,31 @@ function createApp({
     }
 
     try {
-    switch (event.type) {
-      case 'checkout.session.completed': {
-        const session = event.data.object;
-        if (session.payment_status === 'paid') {
-          await notifyPaidOrder(stripe, session);
-          await notifyPaidOrder(stripe, session);
-        logSuccessfulPayment(session);
+      switch (event.type) {
+        case 'checkout.session.completed': {
+          const session = event.data.object;
+          if (session.payment_status === 'paid') {
+            await notifyPaidOrder(stripe, session);
+            logSuccessfulPayment(session);
+          }
+          break;
         }
-        break;
+        case 'checkout.session.async_payment_succeeded': {
+          const session = event.data.object;
+          await notifyPaidOrder(stripe, session);
+          logSuccessfulPayment(session);
+          break;
+        }
+        case 'checkout.session.async_payment_failed': {
+          console.warn('Stripe asynchronous payment failed:', event.data.object.id);
+          break;
+        }
+        default:
+          console.log('Unhandled Stripe event:', event.type);
       }
-      case 'checkout.session.async_payment_succeeded': {
-        const session = event.data.object;
-        logSuccessfulPayment(session);
-        break;
-      }
-      case 'checkout.session.async_payment_failed': {
-        const session = event.data.object;
-        console.warn('Stripe asynchronous payment failed:', session.id);
-        break;
-      }
-      default:
-        console.log('Unhandled Stripe event:', event.type);
-    }
-
     } catch (error) {
       console.error('Paid-order email failed:', error.message);
-      // 500 tells Stripe to retry; this does not reverse or repeat a charge.
+      // A 500 asks Stripe to retry; it never charges the customer again.
       return res.status(500).json({ error: 'Order notification failed.' });
     }
 
