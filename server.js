@@ -2,6 +2,7 @@ const express = require('express');
 const Stripe = require('stripe');
 const path = require('node:path');
 const prices = require('./stripe-prices.json');
+const { notifyPaidOrder } = require('./order-email');
 
 // Server-only configuration. Never expose these secrets through browser JavaScript.
 function createApp({
@@ -14,22 +15,11 @@ function createApp({
   app.disable('x-powered-by');
 
   function logSuccessfulPayment(session) {
-    const customerDetails = session.customer_details || {};
-    const shippingDetails = session.shipping_details || {};
-    const payment = {
-      sessionId: session.id,
-      paymentStatus: session.payment_status,
-      amount: session.amount_total,
-      currency: session.currency,
-      customerName: customerDetails.name || shippingDetails.name || null,
-      customerEmail: customerDetails.email || null,
-      phoneNumber: customerDetails.phone || null,
-      deliveryAddress: shippingDetails.address || null
-    };
-    console.log('Stripe payment successful:', JSON.stringify(payment));
+    // Don't put customer names or delivery addresses in server logs.
+    console.log('Stripe payment completed:', session.id, session.amount_total, session.currency);
   }
 
-  app.post('/stripe-webhook', express.raw({ type: 'application/json' }), (req, res) => {
+  app.post('/stripe-webhook', express.raw({ type: 'application/json' }), async (req, res) => {
     if (!stripe || !webhookSecret) {
       return res.status(503).json({ error: 'Stripe webhook is not configured.' });
     }
@@ -46,26 +36,33 @@ function createApp({
       return res.status(400).send(`Webhook Error: ${error.message}`);
     }
 
-    switch (event.type) {
-      case 'checkout.session.completed': {
-        const session = event.data.object;
-        if (session.payment_status === 'paid') {
-          logSuccessfulPayment(session);
+    try {
+      switch (event.type) {
+        case 'checkout.session.completed': {
+          const session = event.data.object;
+          if (session.payment_status === 'paid') {
+            await notifyPaidOrder(stripe, session);
+            logSuccessfulPayment(session);
+          }
+          break;
         }
-        break;
+        case 'checkout.session.async_payment_succeeded': {
+          const session = event.data.object;
+          await notifyPaidOrder(stripe, session);
+          logSuccessfulPayment(session);
+          break;
+        }
+        case 'checkout.session.async_payment_failed': {
+          console.warn('Stripe asynchronous payment failed:', event.data.object.id);
+          break;
+        }
+        default:
+          console.log('Unhandled Stripe event:', event.type);
       }
-      case 'checkout.session.async_payment_succeeded': {
-        const session = event.data.object;
-        logSuccessfulPayment(session);
-        break;
-      }
-      case 'checkout.session.async_payment_failed': {
-        const session = event.data.object;
-        console.warn('Stripe asynchronous payment failed:', session.id);
-        break;
-      }
-      default:
-        console.log('Unhandled Stripe event:', event.type);
+    } catch (error) {
+      console.error('Paid-order email failed:', error.message);
+      // A 500 asks Stripe to retry; it never charges the customer again.
+      return res.status(500).json({ error: 'Order notification failed.' });
     }
 
     res.status(200).json({ received: true });
