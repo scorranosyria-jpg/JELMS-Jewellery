@@ -214,12 +214,13 @@ function createApp({
   return app;
 }
 
-const key = process.env.STRIPE_SECRET_KEY;
 const isPreview = process.env.VERCEL_ENV === 'preview';
-const isTestKey = Boolean(key && key.startsWith('sk_test_'));
 const sandboxEnabled = process.env.JELMS_SANDBOX_CHECKOUT === '1';
-// On this isolated test branch, fail closed: never let a Preview deploy
-// use a live Stripe secret key, inherited or otherwise.
+// The isolated test branch uses a separate sandbox-only secret key.
+// Never read the production STRIPE_SECRET_KEY from Vercel Preview.
+const key = isPreview ? process.env.STRIPE_SECRET_TEST_KEY : process.env.STRIPE_SECRET_KEY;
+const isTestKey = Boolean(key && key.startsWith('sk_test_'));
+// Fail closed: never let the Preview run with a live or missing Stripe key.
 const stripe = key && !key.includes('...') &&
   (!isPreview || (sandboxEnabled && isTestKey)) ? new Stripe(key) : null;
 
