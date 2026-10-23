@@ -41,7 +41,7 @@ test('verified Stripe checkout triggers one merchant notification; invalid/pendi
       return nativeFetch(url, options);
     };
 
-    const app = createApp({ stripe, domain: 'http://localhost:3000', webhookSecret: secret });
+    const app = createApp({ stripe, domain: 'http://localhost:3000', webhookSecret: '  ' + secret + '\n' });
     server = await new Promise((resolve, reject) => {
       const s = app.listen(0, '127.0.0.1', () => resolve(s));
       s.on('error', reject);
