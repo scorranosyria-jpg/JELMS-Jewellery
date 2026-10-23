@@ -12,6 +12,10 @@ function createApp({
 } = {}) {
   const app = express();
   const origin = new URL(domain).origin;
+  // This is a test-only branch. A Vercel Preview is never allowed to run
+  // real-money checkout, even if a live Stripe key was inherited from Vercel.
+  const sandboxPreview = process.env.VERCEL_ENV === 'preview' &&
+    process.env.JELMS_SANDBOX_CHECKOUT === '1';
   app.disable('x-powered-by');
 
   function logSuccessfulPayment(session) {
@@ -91,8 +95,22 @@ function createApp({
     if (!stripe || items.some(item => !/^price_[a-zA-Z0-9]+$/.test(prices[item.productId]))) {
       return res.status(503).json({ error: 'Online checkout is not available yet. Please contact us to order.' });
     }
+    if (sandboxPreview && items.some(item => item.productId !== 'short-keychain')) {
+      return res.status(400).json({ error: 'Sandbox test: please buy one Short Keychain only.' });
+    }
     try {
-      // Product IDs and quantities come from the cart. Prices come ONLY from this server.
+      // Real prices remain server-side. The sandbox test deliberately uses
+      // an inline TEST price, so no second catalogue of sandbox price IDs is needed.
+      const lineItems = sandboxPreview
+        ? items.map(item => ({
+            price_data: {
+              currency: 'chf',
+              product_data: { name: 'JELMS Sandbox Test – Short Keychain' },
+              unit_amount: 1000
+            },
+            quantity: item.quantity
+          }))
+        : items.map(item => ({ price: prices[item.productId], quantity: item.quantity }));
       const session = await stripe.checkout.sessions.create({
         "ui_mode": "hosted_page",
         "billing_address_collection": "auto",
@@ -169,7 +187,7 @@ function createApp({
         mode: 'payment',
         success_url: `${origin}/success?session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: origin,
-        line_items: items.map(item => ({ price: prices[item.productId], quantity: item.quantity })),
+        line_items: lineItems,
       });
       res.json({ url: session.url });
     } catch (error) {
@@ -197,11 +215,19 @@ function createApp({
 }
 
 const key = process.env.STRIPE_SECRET_KEY;
-const stripe = key && !key.includes('...') ? new Stripe(key) : null;
+const isPreview = process.env.VERCEL_ENV === 'preview';
+const isTestKey = Boolean(key && key.startsWith('sk_test_'));
+const sandboxEnabled = process.env.JELMS_SANDBOX_CHECKOUT === '1';
+// On this isolated test branch, fail closed: never let a Preview deploy
+// use a live Stripe secret key, inherited or otherwise.
+const stripe = key && !key.includes('...') &&
+  (!isPreview || (sandboxEnabled && isTestKey)) ? new Stripe(key) : null;
 
 const app = createApp({
   stripe,
-  domain: process.env.DOMAIN
+  domain: isPreview && process.env.VERCEL_URL
+    ? 'https://' + process.env.VERCEL_URL
+    : process.env.DOMAIN
 });
 
 if (require.main === module) {
