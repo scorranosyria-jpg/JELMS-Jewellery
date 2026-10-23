@@ -305,9 +305,7 @@ window.JELMS_CONTENT = {
   // KONTAKT
   // ============================================================
   contact: {
-    // TODO: TEXT ERSETZEN — Überschrift
-    heading: "Fill out the form & order",
-    // TODO: TEXT ERSETZEN — Einleitungstext
+    heading: "Get in touch",
     introText:
       "We would love to hear from you. Whether you have a question, need help with an order, or simply want to say hello, feel free to get in touch.",
     email: "jelms.jewellery@outlook.com",
