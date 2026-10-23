@@ -112,6 +112,13 @@ function createApp({
           }))
         : items.map(item => ({ price: prices[item.productId], quantity: item.quantity }));
       const session = await stripe.checkout.sessions.create({
+        // In the sandbox only, offer cards and TWINT. Avoid Klarna,
+        // Amazon Pay and Stripe Link without affecting the live store.
+        // Apple Pay is a card wallet controlled separately in Stripe Checkout settings.
+        ...(sandboxPreview ? {
+          payment_method_types: ['card', 'twint'],
+          wallet_options: { link: { display: 'never' } }
+        } : {}),
         "ui_mode": "hosted_page",
         "billing_address_collection": "auto",
         "phone_number_collection": {
