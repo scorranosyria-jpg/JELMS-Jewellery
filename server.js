@@ -33,7 +33,9 @@ function createApp({
       event = stripe.webhooks.constructEvent(
         req.body,
         req.headers['stripe-signature'],
-        webhookSecret
+        // Stripe signing secrets never contain surrounding whitespace.
+        // Trim accidental spaces/newlines pasted into Preview env settings.
+        typeof webhookSecret === 'string' ? webhookSecret.trim() : webhookSecret
       );
     } catch (error) {
       console.error('Stripe webhook verification failed:', error.message);
