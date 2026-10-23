@@ -512,7 +512,6 @@
     $('#detail-name').textContent = product.name;
     $('#detail-price').textContent = formatPrice(product.price, product.currency);
     $('#detail-description').textContent = product.description;
-    $('#detail-material').innerHTML = '<strong>Material:</strong> ' + escapeHtml(product.material);
 
     var qtyValueEl = $('#detail-qty-value');
     $('#detail-qty-decrease').addEventListener('click', function () {

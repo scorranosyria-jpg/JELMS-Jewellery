@@ -945,17 +945,6 @@ body {
   margin: 0 0 var(--sp-md) 0;
 }
 
-.detail-material {
-  font-family: var(--font-body);
-  color: var(--color-text);
-  font-size: var(--fs-sm);
-  margin: 0 0 var(--sp-lg) 0;
-}
-
-.detail-material strong {
-  font-weight: 600;
-}
-
 .quantity-row {
   display: flex;
   align-items: center;

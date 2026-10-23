@@ -84,8 +84,7 @@ window.JELMS_CONTENT = {
     "images": [
       "images/Final pictures/Braclets/Summertime collection (3).jpg"
     ],
-    "description": "",
-    "material": ""
+    "description": "Bring a fresh, ocean-inspired touch to your summer style with this coordinated bracelet set. Wear the pieces together or mix them with your everyday favourites."
   },
   {
     "id": "pink-breeze-bracelet-set",
@@ -97,8 +96,7 @@ window.JELMS_CONTENT = {
     "images": [
       "images/Final pictures/Braclets/Summertime collection (2).jpg"
     ],
-    "description": "",
-    "material": ""
+    "description": "Soft pink tones give this bracelet set a light, playful feel for sunny days. Style the pieces together for a coordinated look or wear them one at a time."
   },
   {
     "id": "sunset-charm-bracelet-set",
@@ -110,8 +108,7 @@ window.JELMS_CONTENT = {
     "images": [
       "images/Final pictures/Braclets/Summertime collection.jpg"
     ],
-    "description": "",
-    "material": ""
+    "description": "Warm sunset-inspired colours make this bracelet set an easy way to brighten your summer outfits. Wear the coordinated pieces together or let one add a subtle pop of colour."
   },
   {
     "id": "ivory-glow-bracelet-set",
@@ -123,8 +120,7 @@ window.JELMS_CONTENT = {
     "images": [
       "images/Final pictures/Braclets/Pearly collection (2).jpg"
     ],
-    "description": "",
-    "material": ""
+    "description": "With its soft, pearly look, this bracelet set adds a gentle glow to both everyday and dressed-up outfits. Wear the pieces together for a polished, coordinated style."
   },
   {
     "id": "soft-glow-bracelet",
@@ -136,8 +132,7 @@ window.JELMS_CONTENT = {
     "images": [
       "images/Final pictures/Braclets/Pearly collection.jpg"
     ],
-    "description": "",
-    "material": ""
+    "description": "A delicate, luminous accent from the Pearly Collection, made for adding a soft touch of shine to your day. Wear it alone or pair it with your favourite bracelets."
   },
   {
     "id": "mint-frost-earrings",
@@ -149,8 +144,7 @@ window.JELMS_CONTENT = {
     "images": [
       "images/Final pictures/Earrings/Frosty christmas collection (3).png"
     ],
-    "description": "",
-    "material": ""
+    "description": "Cool, winter-inspired tones bring a crisp festive accent to your look. These earrings add a subtle seasonal sparkle for celebrations and cosy days alike."
   },
   {
     "id": "winter-sky-earrings",
@@ -162,8 +156,7 @@ window.JELMS_CONTENT = {
     "images": [
       "images/Final pictures/Earrings/Snowflake collection.png"
     ],
-    "description": "",
-    "material": ""
+    "description": "Inspired by a clear winter sky, these earrings bring a bright, wintry touch to your outfit. Their seasonal style works beautifully for festive gatherings or everyday wear."
   },
   {
     "id": "icicle-cascade-earrings",
@@ -175,8 +168,7 @@ window.JELMS_CONTENT = {
     "images": [
       "images/Final pictures/Earrings/Frosty christmas collection.png"
     ],
-    "description": "",
-    "material": ""
+    "description": "Inspired by the delicate shape of falling icicles, these earrings add an elegant winter accent. Let them bring a little seasonal sparkle to special occasions and everyday outfits."
   },
   {
     "id": "twilight-frost-earrings",
@@ -188,8 +180,7 @@ window.JELMS_CONTENT = {
     "images": [
       "images/Final pictures/Earrings/Frosty christmas collection (2).png"
     ],
-    "description": "",
-    "material": ""
+    "description": "A cool, twilight-inspired look gives these earrings a distinctive touch for the winter season. Pair them with your favourite evening outfit or wear them to add a hint of festive charm."
   },
   {
     "id": "evergreen-glow-earrings",
@@ -201,8 +192,7 @@ window.JELMS_CONTENT = {
     "images": [
       "images/Final pictures/Earrings/Christmas tree collection.png"
     ],
-    "description": "",
-    "material": ""
+    "description": "Bring a little evergreen charm to the festive season with these Christmas tree-inspired earrings. They make a cheerful finishing touch for celebrations and winter days."
   },
   {
     "id": "clementine-glow-earrings",
@@ -214,8 +204,7 @@ window.JELMS_CONTENT = {
     "images": [
       "images/Final pictures/Earrings/Christmas lights collection.png"
     ],
-    "description": "",
-    "material": ""
+    "description": "Bright and cheerful, these earrings take their inspiration from the glow of Christmas lights. Add a festive pop of colour to your seasonal outfits."
   },
   {
     "id": "festive-flame-earrings",
@@ -227,8 +216,7 @@ window.JELMS_CONTENT = {
     "images": [
       "images/Final pictures/Earrings/Christmas lights collection (2).png"
     ],
-    "description": "",
-    "material": ""
+    "description": "Inspired by the warm glow of festive lights, these earrings bring a bold seasonal accent to your look. Wear them to brighten up celebrations or add colour to a winter outfit."
   },
   {
     "id": "short-keychain",
@@ -240,8 +228,7 @@ window.JELMS_CONTENT = {
     "images": [
       "images/Final pictures/keychains/Short keychain.png"
     ],
-    "description": "",
-    "material": ""
+    "description": "Keep your keys easy to find with this compact keychain, or add a little charm to your everyday bag. Its shorter length makes it a simple, practical accessory to carry."
   },
   {
     "id": "long-keychain",
@@ -253,8 +240,7 @@ window.JELMS_CONTENT = {
     "images": [
       "images/Final pictures/keychains/Long keychain.png"
     ],
-    "description": "",
-    "material": ""
+    "description": "Give your keys or bag a longer, eye-catching accent with this keychain. Its extended style is easy to spot and makes a charming everyday accessory."
   }
 ],
 
