@@ -94,6 +94,10 @@ function createApp({
     try {
       // Product IDs and quantities come from the cart. Prices come ONLY from this server.
       const session = await stripe.checkout.sessions.create({
+        // JELMS accepts cards (including Apple Pay where available) and TWINT only.
+        // Explicitly disable Link and exclude other payment methods.
+        payment_method_types: ['card', 'twint'],
+        wallet_options: { link: { display: 'never' } },
         "ui_mode": "hosted_page",
         "billing_address_collection": "auto",
         "phone_number_collection": {
