@@ -20,7 +20,7 @@ const stripe = {
 };
 
 async function withMock(variables, response, callback) {
-  const keys = ['BREVO_API_KEY', 'BREVO_SENDER_EMAIL', 'ORDER_NOTIFICATION_EMAIL'];
+  const keys = ['BREVO_API_KEY', 'BREVO_SENDER_EMAIL', 'ORDER_NOTIFICATION_EMAIL', 'ORDER_NOTIFICATION_SENDER_EMAIL'];
   const originals = Object.fromEntries(keys.map(key => [key, process.env[key]]));
   const origFetch = global.fetch;
   const requests = [];
@@ -74,6 +74,20 @@ test('prepares a correctly addressed order email with items and shipping informa
     assert.match(customer.htmlContent, /TEST ORDER ONLY/);
     assert.ok(!customer.htmlContent.includes(env.BREVO_API_KEY));
   });
+});
+
+test('uses a different verified sender only for merchant alerts when configured', async () => {
+  await withMock({ ...env, ORDER_NOTIFICATION_SENDER_EMAIL: 'jelms-notifications@example.test' },
+    { ok: true, status: 201 }, async requests => {
+      await notifyPaidOrder(stripe, session);
+      assert.equal(requests.length, 2);
+      const merchant = JSON.parse(requests[0].body);
+      const customer = JSON.parse(requests[1].body);
+      assert.equal(merchant.sender.email, 'jelms-notifications@example.test');
+      assert.equal(merchant.to[0].email, 'jelms.jewellery@outlook.com');
+      assert.equal(customer.sender.email, 'jelms.jewellery@outlook.com');
+      assert.equal(customer.replyTo.email, 'jelms.jewellery@outlook.com');
+    });
 });
 
 test('does not send when the Brevo secret is absent', async () => {
