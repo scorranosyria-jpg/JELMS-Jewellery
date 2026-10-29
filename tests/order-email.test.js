@@ -49,7 +49,7 @@ const env = {
 test('prepares a correctly addressed order email with items and shipping information', async () => {
   await withMock(env, { ok: true, status: 201 }, async requests => {
     await notifyPaidOrder(stripe, session);
-    assert.equal(requests.length, 1);
+    assert.equal(requests.length, 2);
     assert.equal(requests[0].url, 'https://api.brevo.com/v3/smtp/email');
     assert.equal(requests[0].method, 'POST');
     const msg = JSON.parse(requests[0].body);
@@ -61,6 +61,18 @@ test('prepares a correctly addressed order email with items and shipping informa
     assert.match(msg.textContent, /Testweg 10/);
     assert.match(msg.textContent, /buyer@example\.test/);
     assert.ok(!msg.textContent.includes(env.BREVO_API_KEY));
+    const customer = JSON.parse(requests[1].body);
+    assert.equal(customer.to[0].email, 'buyer@example.test');
+    assert.equal(customer.sender.email, 'jelms.jewellery@outlook.com');
+    assert.equal(customer.replyTo.email, 'jelms.jewellery@outlook.com');
+    assert.match(customer.subject, /^\[TEST\] Your JELMS order is confirmed/);
+    assert.match(customer.textContent, /Pearl Bracelet/);
+    assert.match(customer.textContent, /Keychain/);
+    assert.match(customer.textContent, /Testweg 10/);
+    assert.match(customer.htmlContent, /images\/Logo\.png/);
+    assert.match(customer.htmlContent, /WEAR YOUR SPARK/);
+    assert.match(customer.htmlContent, /TEST ORDER ONLY/);
+    assert.ok(!customer.htmlContent.includes(env.BREVO_API_KEY));
   });
 });
 
