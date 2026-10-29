@@ -129,6 +129,9 @@ async function notifyPaidOrder(stripe, session) {
   const apiKey = process.env.BREVO_API_KEY;
   const from = process.env.BREVO_SENDER_EMAIL;
   const to = process.env.ORDER_NOTIFICATION_EMAIL || 'jelms.jewellery@outlook.com';
+  // Optional verified sender just for internal order alerts. Customer confirmations
+  // continue to use BREVO_SENDER_EMAIL; no change until this is configured.
+  const merchantFrom = process.env.ORDER_NOTIFICATION_SENDER_EMAIL || from;
   if (!apiKey || !from) throw new Error('BREVO_API_KEY / BREVO_SENDER_EMAIL not configured');
 
   const response = await stripe.checkout.sessions.listLineItems(session.id, { limit: 100 });
@@ -160,7 +163,7 @@ async function notifyPaidOrder(stripe, session) {
   ].join('\n');
 
   // Internal order email always goes to JELMS, exactly as before.
-  await sendBrevoEmail(apiKey, from, {
+  await sendBrevoEmail(apiKey, merchantFrom, {
     to: [{ email: to }],
     subject: 'Neue bezahlte JELMS Bestellung: ' + money(session.amount_total, session.currency),
     textContent: text
