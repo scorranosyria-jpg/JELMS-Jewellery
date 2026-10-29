@@ -74,46 +74,6 @@ function createApp({
     res.status(200).json({ received: true });
   });
 
-  // TEMPORARY sandbox-only diagnosis: query Brevo event statuses without
-  // exposing API keys, email addresses, message bodies or customer data.
-  if (sandboxPreview) {
-    app.get('/__jelms-brevo-delivery-check', async (req, res) => {
-      res.set('Cache-Control', 'no-store');
-      const apiKey = process.env.BREVO_API_KEY;
-      const email = process.env.ORDER_NOTIFICATION_EMAIL;
-      if (!apiKey || !email) return res.status(503).json({ error: 'brevo_config_missing' });
-      try {
-        const query = new URLSearchParams({
-          email,
-          startDate: '2026-10-29',
-          endDate: '2026-10-29',
-          limit: '100',
-          sort: 'desc'
-        });
-        const response = await fetch('https://api.brevo.com/v3/smtp/statistics/events?' + query, {
-          headers: { 'api-key': apiKey, Accept: 'application/json' },
-          signal: AbortSignal.timeout(9000)
-        });
-        if (!response.ok) return res.status(502).json({ brevoHttpStatus: response.status });
-        const data = await response.json();
-        const events = Array.isArray(data.events) ? data.events : [];
-        // Only a date, canonical event type, and redacted rejection reason.
-        const sanitized = events.map(e => ({
-          date: String(e.date || '').slice(0, 30),
-          event: String(e.event || '').replace(/[^a-zA-Z_]/g, '').slice(0, 35),
-          reason: String(e.reason || '')
-            .replace(/[^\s@]+@[^\s@]+/g, '[email-redacted]')
-            .replace(/\+?\d[\d ()-]{7,}\d/g, '[number-redacted]')
-            .replace(/[\r\n]+/g, ' ')
-            .slice(0, 180)
-        }));
-        res.json({ date: '2026-10-29', count: sanitized.length, events: sanitized });
-      } catch (_) {
-        res.status(502).json({ error: 'brevo_query_failed' });
-      }
-    });
-  }
-
   app.use(express.json({ limit: '16kb' }));
 
   app.post('/api/create-checkout-session', async (req, res) => {
